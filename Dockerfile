@@ -3,7 +3,6 @@ FROM ubuntu
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LC_ALL=C.UTF-8
 
-
 RUN useradd -m ankisyncd && \
   apt update && apt upgrade -y && \
   apt install -y --no-install-recommends \
