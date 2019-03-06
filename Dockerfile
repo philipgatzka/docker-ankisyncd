@@ -20,6 +20,7 @@ RUN useradd -m ankisyncd && \
   pip3 install -r requirements.txt && \
   cd .. && \
   pip3 install webob configparser && \
+  chown -R ankisyncd /anki-sync-server && \
   apt autoremove -y git build-essential && \
   apt-get clean
 
