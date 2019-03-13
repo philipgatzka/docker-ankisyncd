@@ -1,30 +1,27 @@
-FROM ubuntu
+FROM alpine:latest
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV LC_ALL=C.UTF-8
-
-RUN useradd -m ankisyncd && \
-  apt update && apt upgrade -y && \
-  apt install -y --no-install-recommends \
+RUN addgroup ankisyncd && \
+  adduser -h /home/ankisyncd -g '' -G ankisyncd -D ankisyncd && \
+  apk upgrade -U && \
+  apk add --no-cache \
     python3 \
-    python3-pip \
-    python3-setuptools \
+    py3-setuptools \
     python3-dev \
-    python3-pyaudio \
-    build-essential \
     git && \
-  git clone --depth=1 https://github.com/tsudoko/anki-sync-server /anki-sync-server && \
-  cd /anki-sync-server && \
+  git clone --depth=1 https://github.com/tsudoko/anki-sync-server /home/ankisyncd/ankisyncd.git && \
+  cd /home/ankisyncd/ankisyncd.git && \
   git submodule update --init && \
   cd anki-bundled && \
+  sed -i 's/^pyaudio$//g' requirements.txt && \
   pip3 install -r requirements.txt && \
   cd .. && \
   pip3 install webob configparser && \
-  chown -R ankisyncd /anki-sync-server && \
-  apt autoremove -y git build-essential && \
-  apt-get clean
+  apk del git py3-setuptools python3-dev && \
+  sed -i 's/\.\//\/home\/ankisyncd\/data\//g' ankisyncd.conf && \
+  mkdir /home/ankisyncd/data && \
+  chown -R ankisyncd:ankisyncd /home/ankisyncd
 
-WORKDIR /anki-sync-server
+WORKDIR /home/ankisyncd/ankisyncd.git
 
 USER ankisyncd
 
@@ -33,3 +30,4 @@ EXPOSE 27701
 ENTRYPOINT ["python3"]
 
 CMD ["-m", "ankisyncd"]
+
