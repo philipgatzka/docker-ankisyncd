@@ -13,10 +13,11 @@ RUN addgroup ankisyncd && \
   git submodule update --init && \
   cd anki-bundled && \
   sed -i 's/^pyaudio$//g' requirements.txt && \
-  pip3 install -r requirements.txt && \
+  pip3 install --no-cache-dir -r requirements.txt && \
   cd .. && \
-  pip3 install webob configparser && \
+  pip3 install --no-cache-dir webob configparser && \
   apk del git py3-setuptools python3-dev && \
+  rm -rf /var/cache/* && \
   sed -i 's/\.\//\/home\/ankisyncd\/data\//g' ankisyncd.conf && \
   mkdir /home/ankisyncd/data && \
   chown -R ankisyncd:ankisyncd /home/ankisyncd
