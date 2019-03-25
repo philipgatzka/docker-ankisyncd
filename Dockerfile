@@ -1,10 +1,15 @@
 FROM alpine:latest
 
+ENV ANKISYNCD_DATA_ROOT /home/ankisyncd/data
+ENV ANKISYNCD_AUTH_DB_PATH /home/ankisyncd/data/auth.db
+ENV ANKISYNCD_SESSION_DB_PATH /home/ankisyncd/data/session.db
+
 RUN addgroup ankisyncd && \
   adduser -h /home/ankisyncd -g '' -G ankisyncd -D ankisyncd && \
   apk upgrade -U && \
   apk add --no-cache \
-    python3 \
+    python3 && \
+  apk add --no-cache --virtual=ankisyncd-build-dependencies \
     py3-setuptools \
     python3-dev \
     git && \
@@ -16,7 +21,7 @@ RUN addgroup ankisyncd && \
   pip3 install --no-cache-dir -r requirements.txt && \
   cd .. && \
   pip3 install --no-cache-dir webob configparser && \
-  apk del git py3-setuptools python3-dev && \
+  apk del ankisyncd-build-dependencies && \
   rm -rf /var/cache/* && \
   sed -i 's/\.\//\/home\/ankisyncd\/data\//g' ankisyncd.conf && \
   mkdir /home/ankisyncd/data && \
@@ -31,4 +36,3 @@ EXPOSE 27701
 ENTRYPOINT ["python3"]
 
 CMD ["-m", "ankisyncd"]
-
