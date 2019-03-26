@@ -23,7 +23,6 @@ RUN addgroup ankisyncd && \
   pip3 install --no-cache-dir webob configparser && \
   apk del ankisyncd-build-dependencies && \
   rm -rf /var/cache/* && \
-  sed -i 's/\.\//\/home\/ankisyncd\/data\//g' ankisyncd.conf && \
   mkdir /home/ankisyncd/data && \
   chown -R ankisyncd:ankisyncd /home/ankisyncd
 
